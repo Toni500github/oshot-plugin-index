@@ -1,0 +1,25 @@
+schema = 1
+
+id          = "io.github.toni500github.plugin-test"
+name        = "Uppercase (test plugin)"
+description = "Uppercases the extracted text. A small plugin for testing oshot's plugin system"
+owners      = ["Toni500github"]
+homepage    = "https://github.com/Toni500github/oshot-plugin-test"
+license     = "Unlicense"
+tags        = ["test", "text"]
+network     = false
+
+[[versions]]
+version = "1.0.0"
+date    = 2026-10-17
+abi     = 1
+imgui   = 19284
+changes = "First release on the reworked plugin API"
+source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v1.0.0", commit = "ecfd2978a2e93bca4833ffa3c83262b3aa5ef144" }
+
+  [versions.artifacts]
+  linux-x86_64   = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.0/oshot-plugin-test-linux-x86_64.so", sha256 = "7eedf9cb9d8271ba8a843fb9d2244d3a80f1423e25c2125b593fc0cdd2c75622" }
+  linux-aarch64  = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.0/oshot-plugin-test-linux-aarch64.so", sha256 = "f2b0405657f6585be37c4f89bee471396a8219752eaa4a57ce7a02307cc8675b" }
+  windows-x86_64 = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.0/oshot-plugin-test-windows-x86_64.dll", sha256 = "537823f74c3b1d87dc7a54693dd6fe3c8aacce47d998ab0c19853f3c2eab97ec" }
+  macos-aarch64  = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.0/oshot-plugin-test-macos-aarch64.dylib", sha256 = "5bf3a06c83515cbb060e9ae70f9d12b2dbaca3f209b7054d05f9a0e610ad33a7" }
+  macos-x86_64   = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.0/oshot-plugin-test-macos-x86_64.dylib", sha256 = "f6e0a6dd07e0634c9bf96ef6ba516223b00688717ae7bc4b3b2683ffdaf6afa1" }

@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Toni500github/oshot-plugin-index/blob/main/schema/plugin.schema.json",
+  "title": "oshot plugin index entry",
+  "description": "One plugin in the oshot plugin index: plugins/<id>.toml. The TOML is validated against this schema after parsing (TOML dates become \"YYYY-MM-DD\" strings).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "id",
+    "name",
+    "description",
+    "owners",
+    "homepage",
+    "license",
+    "versions"
+  ],
+  "properties": {
+    "schema": {
+      "description": "Version of this entry format.",
+      "const": 1
+    },
+    "id": {
+      "description": "The plugin ID, the same as in its oshot_plugin_t and oshot-plugin.toml, and the file name without .toml. An io.github.<user>.* ID must belong to one of the owners.",
+      "$ref": "#/$defs/plugin_id"
+    },
+    "name": {
+      "description": "Display name.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "description": {
+      "description": "One sentence about what the plugin does, shown in oshot's plugin browser.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "owners": {
+      "description": "GitHub accounts allowed to change this entry. The first pull request must come from one of them, and later ones from someone already listed.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$"
+      }
+    },
+    "homepage": {
+      "description": "Where people learn more and report issues.",
+      "$ref": "#/$defs/https_url"
+    },
+    "license": {
+      "description": "SPDX license expression, e.g. \"MIT\" or \"GPL-3.0-or-later\".",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "authors": {
+      "description": "Names to credit, if not the same as owners.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "tags": {
+      "description": "A few lowercase words to search and group by, e.g. \"translation\", \"upload\", \"ocr\".",
+      "type": "array",
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,23}$"
+      }
+    },
+    "network": {
+      "description": "The author's statement that the plugin connects to the internet. oshot shows it before installing. Not enforced: plugins are native code.",
+      "type": "boolean",
+      "default": false
+    },
+    "versions": {
+      "description": "Released versions. Once merged, a version can't be changed or removed, only yanked.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/version"
+      }
+    }
+  },
+  "$defs": {
+    "plugin_id": {
+      "description": "lowercase letters, digits, '-', '_' and at least one '.', 3-64 characters, starting and ending with a letter or digit, e.g. \"io.github.user.translate\"",
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9](?:[a-z0-9_-]|\\.(?!\\.))*\\.[a-z0-9_-]*[a-z0-9]$"
+    },
+    "https_url": {
+      "description": "an https:// URL",
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https://[^\\s]+$"
+    },
+    "sha256": {
+      "description": "the file's SHA-256 as 64 lowercase hex digits (`sha256sum file`)",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "semver": {
+      "description": "a semantic version like \"1.2.0\" or \"2.0.0-beta.1\"",
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "target": {
+      "description": "<platform>-<arch>, e.g. \"linux-x86_64\", \"windows-x86_64\", \"macos-aarch64\" (as oshot's OSHOT_TARGET)",
+      "type": "string",
+      "pattern": "^(linux|macos|windows|freebsd|openbsd|netbsd|dragonfly)-(x86_64|aarch64|i686|armv7|riscv64|ppc64le|s390x)$"
+    },
+    "artifact": {
+      "description": "A prebuilt build for one target: the plugin library itself (.so, .dll, .dylib) or an oshotpm prebuilt archive (.zip, .tar.gz, .tgz, .tar.xz, .txz) whose oshot-plugin.toml lists it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "sha256"
+      ],
+      "properties": {
+        "url": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/https_url"
+            },
+            {
+              "pattern": "\\.(so|dll|dylib|zip|tar\\.gz|tgz|tar\\.xz|txz)$"
+            }
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "source": {
+      "description": "Where to build this version from, for targets without an artifact. The commit is what was reviewed; the tag is for people.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "git",
+        "tag",
+        "commit"
+      ],
+      "properties": {
+        "git": {
+          "$ref": "#/$defs/https_url"
+        },
+        "tag": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "the full 40-character commit hash the tag points to"
+        },
+        "subdir": {
+          "description": "Folder with the oshot-plugin.toml, if it's not at the repository root.",
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\\\]+$"
+        }
+      }
+    },
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "date",
+        "abi",
+        "imgui"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "source"
+          ]
+        },
+        {
+          "required": [
+            "artifacts"
+          ]
+        }
+      ],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "date": {
+          "description": "Release date, a TOML date like 2026-10-17.",
+          "type": "string",
+          "format": "date"
+        },
+        "abi": {
+          "description": "OSHOT_API_VERSION the plugin is built for.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "imgui": {
+          "description": "OSHOT_IMGUI_VERSION the plugin is built for, or 0 if it doesn't use ImGui.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "min-oshot": {
+          "description": "Oldest oshot version it works with, if newer than the one that introduced its abi.",
+          "$ref": "#/$defs/semver"
+        },
+        "changes": {
+          "description": "Short release notes.",
+          "type": "string",
+          "maxLength": 2000
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "artifacts": {
+          "description": "Prebuilt builds per target. oshot installs these without building anything.",
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "$ref": "#/$defs/target"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/artifact"
+          }
+        },
+        "yanked": {
+          "description": "Withdrawn: not offered for new installs, and oshot warns people who have it.",
+          "type": "boolean",
+          "default": false
+        },
+        "yanked-reason": {
+          "type": "string",
+          "maxLength": 300
+        }
+      }
+    }
+  }
+}
