@@ -1,7 +1,6 @@
 name: Publish
 
 # Builds index.toml/index.json from plugins/ and serves them with GitHub Pages
-# (Settings > Pages > Source: GitHub Actions)
 on:
   push:
     branches: [main]
