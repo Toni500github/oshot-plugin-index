@@ -13,8 +13,8 @@ into one index that oshot downloads:
 > reviews every line of every plugin. Only install plugins from people you trust.
 
 > [!NOTE]
-> **Status: draft.** oshot doesn't read this index yet: installing from it, yank warnings and `source.subdir` arrive
-> with that support. Until then, entries can be added and checked, and plugins are installed with `oshotpm install`.
+> oshot reads this index from its next release on (it's in the development builds already): Tools > Browse Plugins
+> in the `-plugins` builds, or `oshotpm search` and `oshotpm install <ID>`.
 
 Plugins are still experimental in oshot: see [Writing oshot plugins](https://github.com/Toni500github/oshot/blob/main/docs/plugins.md)
 for how to make one.
