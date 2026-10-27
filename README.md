@@ -109,6 +109,12 @@ source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v
 Add a new `[[versions]]` table to `plugins/<id>.toml` and open a pull request against `main` from one of the
 `owners`.
 
+Once its checks pass, it's merged on its own after 24 hours, so a maintainer has time to look at it. That's if it
+only adds versions to your entry, or yanks some, builds them from the same git repository and downloads them from the
+same places as before (the same GitHub or Codeberg repository, or else the same server). Anything else waits for a
+maintainer: changing `owners`, `[capabilities]` or another field, moving the artifacts somewhere new, or changing other
+files. A yank doesn't wait. [`scripts/automerge.py`](scripts/automerge.py) has the exact rules.
+
 Released versions can't be changed or removed, so what was reviewed stays what people install. To withdraw one,
 yank it, so oshot stops offering it and warns people who have it installed.
 
@@ -132,7 +138,8 @@ To hand a plugin over, have a current owner add the new one to `owners`.
 - for each new version: every artifact downloads and matches its `sha256`, the tag points to the commit, and the
   `linux-x86_64` build, if any, has the entry's ID, ABI and ImGui version compiled in.
 
-A maintainer then looks the plugin over before merging. A plugin is refused or removed if it hides what it does
+A maintainer then looks a new plugin over before merging it, and can stop an update from being merged on its own
+with the `no-auto-merge` label. A plugin is refused or removed if it hides what it does
 (obfuscated code, artifacts that don't match the source), does more than its description and `capabilities` say
 (e.g. sends data somewhere without declaring `network`), or harms people's computers.
 

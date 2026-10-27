@@ -1,0 +1,86 @@
+name: Auto-merge
+
+# Merges the pull requests against main that only release or yank versions of an entry, from one of its owners,
+# once Validate passed and they waited long enough for a maintainer to look (scripts/automerge.py has the rules).
+# The rest wait for a maintainer, and so does any pull request with the no-auto-merge label.
+# It only reads pull requests with git and the scripts on main, since this job can write to the repository.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      wait-hours:
+        description: Hours a new version waits after its last push
+        default: "24"
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+  checks: read
+
+concurrency:
+  group: auto-merge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+      WAIT_HOURS: ${{ inputs.wait-hours || '24' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r scripts/requirements.txt
+
+      - name: Merge the pull requests that qualify
+        run: |
+          merged=0
+          now=$(date +%s)
+          prs=$(gh pr list --repo "$GITHUB_REPOSITORY" --base main --state open --limit 100 \
+                  --json number,headRefOid,author,isDraft,labels \
+                  --jq '.[] | select(.isDraft | not) | select([.labels[].name] | index("no-auto-merge") | not)
+                        | "\(.number) \(.headRefOid) \(.author.login)"')
+          while read -r number sha author; do
+            [ -n "$number" ] || continue
+            echo "::group::#$number by $author ($sha)"
+
+            # Validate's latest run for this commit, which also tells when it was pushed
+            run=$(gh api "repos/$GITHUB_REPOSITORY/commits/$sha/check-runs?check_name=validate&filter=latest" \
+                    --jq '[.check_runs[] | select(.app.slug == "github-actions")][0]
+                          | "\(.status) \(.conclusion) \(.started_at)"')
+            read -r status conclusion started <<< "$run"
+            if [ "$status" != completed ] || [ "$conclusion" != success ]; then
+              echo "Validate hasn't passed (${run:-no run})"; echo "::endgroup::"; continue
+            fi
+
+            if ! git fetch -q origin "pull/$number/head" || [ "$(git rev-parse FETCH_HEAD)" != "$sha" ]; then
+              echo "The pull request changed since it was listed"; echo "::endgroup::"; continue
+            fi
+            if ! kind=$(python scripts/automerge.py origin/main "$sha" "$author"); then
+              echo "$kind"; echo "::endgroup::"; continue
+            fi
+
+            # Yanking only makes people safer, so it doesn't wait
+            age=$(( (now - $(date -d "$started" +%s)) / 3600 ))
+            if [ "$kind" = versions ] && [ "$age" -lt "$WAIT_HOURS" ]; then
+              echo "Qualifies, waiting until it's $WAIT_HOURS hours old (it's $age)"; echo "::endgroup::"; continue
+            fi
+
+            gh pr merge "$number" --repo "$GITHUB_REPOSITORY" --squash --match-head-commit "$sha" && merged=1
+            echo "::endgroup::"
+          done <<< "$prs"
+          echo "merged=$merged" >> "$GITHUB_ENV"
+
+      # Pushes made with this job's token start no workflows
+      - name: Publish
+        if: env.merged == '1'
+        run: gh workflow run publish.yml --repo "$GITHUB_REPOSITORY" --ref main
