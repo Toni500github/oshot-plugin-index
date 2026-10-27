@@ -101,7 +101,7 @@ def main() -> int:
 
     lines = [
         "# The oshot plugin index, generated from https://github.com/Toni500github/oshot-plugin-index",
-        "# Don't edit: change the entries in plugins/ instead.",
+        "# Don't edit it. Change the entries in plugins/ instead.",
         f"schema = {index['schema']}",
         f"generated = {index['generated']}",
     ]

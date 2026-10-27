@@ -1,8 +1,8 @@
 # oshot plugin index
 
 The list of plugins that [oshot](https://github.com/Toni500github/oshot) can browse and install. Each plugin is one
-file, [`plugins/<id>.toml`](plugins), added and updated through pull requests. On every merge, the entries are merged
-into one index that oshot downloads:
+file, [`plugins/<id>.toml`](plugins), added and updated through pull requests. Every merge combines the entries into
+one index that oshot downloads:
 
 - https://toni500github.github.io/oshot-plugin-index/index.toml (what oshot reads)
 - https://toni500github.github.io/oshot-plugin-index/index.json (the same, for other tools)
@@ -13,17 +13,17 @@ into one index that oshot downloads:
 > reviews every line of every plugin. Only install plugins from people you trust.
 
 > [!NOTE]
-> oshot reads this index from its next release on (it's in the development builds already): Tools > Browse Plugins
-> in the `-plugins` builds, or `oshotpm search` and `oshotpm install <ID>`.
+> oshot reads this index from its next release on (it's in the development builds already). Open it with Tools >
+> Browse Plugins in the `-plugins` builds, or use `oshotpm search` and `oshotpm install <ID>`.
 
-Plugins are still experimental in oshot: see [Writing oshot plugins](https://github.com/Toni500github/oshot/blob/main/docs/plugins.md)
+Plugins are still experimental in oshot. See [Writing oshot plugins](https://github.com/Toni500github/oshot/blob/main/docs/plugins.md)
 for how to make one.
 
 ## Adding a plugin
 
 1. Release your plugin: tag a commit in a public git repository and, if you can, attach prebuilt libraries (or
-   oshotpm prebuilt archives) for the platforms you support. Prebuilt files are what most people need: building from
-   source needs git, a compiler and oshot's SDK, which few Windows and macOS users have.
+   oshotpm prebuilt archives) for the platforms you support. Prebuilt files are what most people need, since building
+   from source needs git, a compiler and oshot's SDK, which few Windows and macOS users have.
 2. Fork this repository and add `plugins/<your plugin ID>.toml`, starting from an existing entry such as
    [`plugins/io.github.toni500github.plugin-test.toml`](plugins/io.github.toni500github.plugin-test.toml), the
    [test plugin](https://github.com/Toni500github/oshot-plugin-test) whose release workflow builds every target.
@@ -33,8 +33,8 @@ One plugin per pull request, please.
 
 ### Plugin IDs
 
-The ID is the one compiled into the plugin (`oshot_plugin_t.id`) and written in its `oshot-plugin.toml`, and the
-entry's file name. Use a reverse domain you control:
+The ID is the one compiled into the plugin (`oshot_plugin_t.id`) and written in its `oshot-plugin.toml`. It's also
+the entry's file name. Use a reverse domain you control:
 
 - `io.github.<your GitHub user>.<plugin>`: the user must be one of the entry's `owners`;
 - or a domain of yours, e.g. `org.example.translate`.
@@ -74,7 +74,7 @@ source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v
 
 - A version needs a `source`, `artifacts`, or both. oshot uses the artifact for the person's platform, and builds from
   source when there's none.
-- `source.commit` is what reviewers look at: it must be the commit the tag points to. If the plugin isn't at the root
+- `source.commit` is what reviewers look at, so it must be the commit the tag points to. If the plugin isn't at the root
   of the repository, set `source.subdir` to the folder with its `oshot-plugin.toml`.
 - An artifact is either the plugin library itself (`.so`, `.dll`, `.dylib`) or an
   [oshotpm prebuilt archive](https://github.com/Toni500github/oshot/blob/main/docs/plugins.md#distributing)
@@ -87,7 +87,7 @@ source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v
 Add a new `[[versions]]` table and open a pull request from one of the `owners`.
 
 Released versions can't be changed or removed, so what was reviewed stays what people install. To withdraw one,
-yank it: oshot no longer offers it and warns people who have it installed.
+yank it, so oshot stops offering it and warns people who have it installed.
 
 ```toml
 yanked        = true

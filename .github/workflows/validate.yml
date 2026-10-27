@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
 
-# Pull requests run plugin code (--inspect loads new Linux builds): keep the token read-only
+# Pull requests run plugin code (--inspect loads new Linux builds), so keep the token read-only
 permissions:
   contents: read
 

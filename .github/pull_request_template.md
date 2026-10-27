@@ -1,4 +1,4 @@
-<!-- Adding or updating a plugin: see the README. One plugin per pull request. -->
+<!-- To add or update a plugin, see the README. One plugin per pull request. -->
 
 **Plugin:** <!-- its ID, e.g. io.github.user.translate -->
 

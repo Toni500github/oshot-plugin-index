@@ -296,7 +296,7 @@ def check_network(path: Path, entry: dict, versions: list[dict], inspect: bool) 
                 dest = Path(tmp) / Path(art["url"]).name
                 try:
                     digest = download(art["url"], dest)
-                except Exception as e:  # noqa: BLE001 - any download failure is the entry's problem
+                except Exception as e:  # noqa: BLE001 (any download failure is the entry's problem)
                     report(path, f"{v['version']} {target}: can't download {art['url']}: {e}")
                     continue
                 if digest != art["sha256"]:

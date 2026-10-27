@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Toni500github/oshot-plugin-index/blob/main/schema/plugin.schema.json",
   "title": "oshot plugin index entry",
-  "description": "One plugin in the oshot plugin index: plugins/<id>.toml. The TOML is validated against this schema after parsing (TOML dates become \"YYYY-MM-DD\" strings).",
+  "description": "One plugin in the oshot plugin index (plugins/<id>.toml). The TOML is validated against this schema after parsing (TOML dates become \"YYYY-MM-DD\" strings).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -76,7 +76,7 @@
       }
     },
     "network": {
-      "description": "The author's statement that the plugin connects to the internet. oshot shows it before installing. Not enforced: plugins are native code.",
+      "description": "The author's statement that the plugin connects to the internet. oshot shows it before installing. Not enforced, since plugins are native code.",
       "type": "boolean",
       "default": false
     },
