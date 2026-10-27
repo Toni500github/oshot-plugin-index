@@ -7,7 +7,6 @@ owners      = ["Toni500github"]
 homepage    = "https://github.com/Toni500github/oshot-plugin-test"
 license     = "Unlicense"
 tags        = ["test", "text"]
-network     = false
 
 [[versions]]
 version = "1.0.0"

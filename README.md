@@ -69,7 +69,6 @@ homepage    = "https://github.com/Toni500github/oshot-plugin-test"
 license     = "Unlicense"                    # SPDX expression
 authors     = ["Toni500github"]              # optional, if not the same as owners
 tags        = ["test", "text"]               # optional, up to 8
-network     = false                          # optional: whether it connects to the internet (shown before installing)
 
 [[versions]]                                 # newest first, by convention
 version = "1.0.0"                            # semantic version
@@ -85,6 +84,16 @@ source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v
   macos-aarch64  = { url = "https://github.com/.../oshot-plugin-test-macos-aarch64.dylib", sha256 = "<64 hex digits>" }
 ```
 
+- A `[capabilities]` table declares what the plugin does beyond oshot's API, each with the reason it needs to:
+  `network` (connects to the internet), `files` (reads or writes files outside its own folder and oshot's cache) and
+  `processes` (runs other programs, `run_process()` included). oshot shows them before installing and in its plugin
+  lists. Nothing can enforce them, since plugins are native code, so they must match what the plugin does. Use the
+  same ones as the plugin's `oshot-plugin.toml`. The test plugin needs none; a translator would have:
+
+  ```toml
+  [capabilities]
+  network = "Sends the text to translate.example.com to translate it"
+  ```
 - A version needs a `source`, `artifacts`, or both. oshot uses the artifact for the person's platform, and builds from
   source when there's none.
 - `source.commit` is what reviewers look at, so it must be the commit the tag points to. If the plugin isn't at the root
@@ -124,8 +133,8 @@ To hand a plugin over, have a current owner add the new one to `owners`.
   `linux-x86_64` build, if any, has the entry's ID, ABI and ImGui version compiled in.
 
 A maintainer then looks the plugin over before merging. A plugin is refused or removed if it hides what it does
-(obfuscated code, artifacts that don't match the source), sends data somewhere without saying so in its description
-and `network`, or harms people's computers.
+(obfuscated code, artifacts that don't match the source), does more than its description and `capabilities` say
+(e.g. sends data somewhere without declaring `network`), or harms people's computers.
 
 Run the checks yourself (Python 3.11+):
 

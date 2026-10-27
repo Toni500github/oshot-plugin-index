@@ -75,10 +75,22 @@
         "pattern": "^[a-z0-9][a-z0-9-]{0,23}$"
       }
     },
-    "network": {
-      "description": "The author's statement that the plugin connects to the internet. oshot shows it before installing. Not enforced, since plugins are native code.",
-      "type": "boolean",
-      "default": false
+    "capabilities": {
+      "description": "The author's statement of what the plugin does on its own, beyond oshot's API, each with the reason it needs to: \"network\" (connects to the internet), \"files\" (reads or writes files outside its own folder and oshot's cache), \"processes\" (runs other programs, run_process() included). The same as [<plugin>.capabilities] in its oshot-plugin.toml. oshot shows them before installing and in its plugin lists. Not enforced, since plugins are native code.",
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "network",
+          "files",
+          "processes"
+        ]
+      },
+      "additionalProperties": {
+        "description": "Why the plugin needs it, e.g. \"Sends the text to translate.example.com to translate it\".",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      }
     },
     "versions": {
       "description": "Released versions. Once merged, a version can't be changed or removed, only yanked.",
