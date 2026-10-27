@@ -17,8 +17,8 @@ concurrency:
 jobs:
   add:
     runs-on: ubuntu-24.04
-    # Not when new-pr is created
-    if: github.event.before != '0000000000000000000000000000000000000000'
+    # Not when new-pr is created or force-pushed, since then there's no earlier new-pr to compare with
+    if: github.event.before != '0000000000000000000000000000000000000000' && !github.event.forced
     env:
       GIT_AUTHOR_NAME: github-actions[bot]
       GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
