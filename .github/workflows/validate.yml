@@ -1,0 +1,53 @@
+name: Validate
+
+# Checks a submission with the scripts on main, so a pull request can't change them
+on:
+  pull_request:
+    branches: [new-pr]
+
+# Pull requests run plugin code (--inspect loads new Linux builds), so keep the token read-only
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    env:
+      GIT_COMMITTER_NAME: github-actions[bot]
+      GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+    steps:
+      - name: Check out the index
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: index
+          fetch-depth: 0
+
+      - name: Check out the submission
+        uses: actions/checkout@v5
+        with:
+          path: submission
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r index/scripts/requirements.txt
+
+      # The checkout is the pull request merged into new-pr, so HEAD^1 is new-pr
+      - name: Add the entry to the index
+        working-directory: index
+        run: python scripts/submission.py ../submission HEAD^1 HEAD
+
+      - name: Check the entry
+        working-directory: index
+        run: |
+          python scripts/validate.py \
+            --base origin/main \
+            --author "${{ github.event.pull_request.user.login }}" \
+            --allow-new --network --inspect
+
+      - name: Build the index
+        working-directory: index
+        run: python scripts/build_index.py --out site

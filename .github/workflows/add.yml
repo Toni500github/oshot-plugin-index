@@ -1,0 +1,87 @@
+name: Add to the index
+
+# A submission merged into new-pr: commit its entry to plugins/ on main, put new-pr back to the template and
+# rebuild the index. Pushes made with this job's token start no workflows, so it starts Publish itself.
+on:
+  push:
+    branches: [new-pr]
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: new-pr
+  cancel-in-progress: false
+
+jobs:
+  add:
+    runs-on: ubuntu-24.04
+    # Not when new-pr is created
+    if: github.event.before != '0000000000000000000000000000000000000000'
+    env:
+      GIT_AUTHOR_NAME: github-actions[bot]
+      GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      GIT_COMMITTER_NAME: github-actions[bot]
+      GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      BEFORE: ${{ github.event.before }}
+    steps:
+      - name: Check out the index
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: index
+          fetch-depth: 0
+
+      - name: Check out new-pr
+        uses: actions/checkout@v5
+        with:
+          path: submission
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r index/scripts/requirements.txt
+
+      # Nothing to do for a push that adds no entry, such as a maintainer changing the template
+      - name: Add the entry to the index
+        id: add
+        working-directory: index
+        run: |
+          entry=$(python scripts/submission.py --allow-empty ../submission "$BEFORE" "$GITHUB_SHA")
+          echo "entry=$entry" >> "$GITHUB_OUTPUT"
+
+      # No --network or --inspect: the pull request checked those, and this job can write to the repository
+      - name: Check the index
+        if: steps.add.outputs.entry
+        working-directory: index
+        run: python scripts/validate.py
+
+      # Before pushing main, so that re-running the job after a failed push still finds the entry
+      - name: Put new-pr back to the template
+        if: steps.add.outputs.entry
+        working-directory: submission
+        env:
+          ENTRY: ${{ steps.add.outputs.entry }}
+        run: |
+          git fetch -q origin new-pr
+          git checkout -q -B new-pr origin/new-pr
+          git rm -q --ignore-unmatch -- "$ENTRY"
+          [ -e template.toml ] || git checkout "$BEFORE" -- template.toml
+          if ! git diff --cached --quiet; then
+            git commit -q -m "Put back the template after adding $(basename "$ENTRY" .toml)"
+            git push -q origin new-pr
+          fi
+
+      - name: Push main
+        if: steps.add.outputs.entry
+        working-directory: index
+        run: git push -q origin main
+
+      - name: Publish
+        if: steps.add.outputs.entry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run publish.yml --repo "$GITHUB_REPOSITORY" --ref main

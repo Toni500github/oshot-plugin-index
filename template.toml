@@ -1,0 +1,29 @@
+# A new plugin for the oshot plugin index. Copy or rename this file to plugins/<your plugin ID>.toml, fill in the
+# <...> parts, drop the optional lines you don't need, and open a pull request against the new-pr branch.
+# Every field is explained in the README and in schema/plugin.schema.json on the main branch:
+# https://github.com/Toni500github/oshot-plugin-index#the-entry
+
+schema = 1                                   # entry format version
+
+id          = "io.github.<your GitHub user>.<plugin>"   # as compiled into the plugin, and this file's name
+name        = "<Display name>"
+description = "<One sentence about what the plugin does, shown in oshot's plugin browser>"
+owners      = ["<your GitHub user>"]         # GitHub accounts that may change this entry
+homepage    = "https://github.com/<user>/<repo>"
+license     = "<SPDX expression, e.g. MIT>"
+authors     = ["<name>"]                     # optional, if not the same as owners
+tags        = ["<tag>"]                      # optional, up to 8 lowercase words
+network     = false                          # optional: whether it connects to the internet (shown before installing)
+
+[[versions]]
+version = "1.0.0"                            # semantic version
+date    = 2026-01-01                         # release date
+abi     = 1                                  # OSHOT_API_VERSION it's built for
+imgui   = 0                                  # OSHOT_IMGUI_VERSION, or 0 without ImGui
+changes = "First release"                    # optional
+source  = { git = "https://github.com/<user>/<repo>", tag = "v1.0.0", commit = "<40 hex digits the tag points to>" }
+
+  [versions.artifacts]                       # optional if source is given: prebuilt files per target
+  linux-x86_64   = { url = "https://github.com/<user>/<repo>/releases/download/v1.0.0/<plugin>-linux-x86_64.so", sha256 = "<sha256sum of the file>" }
+  windows-x86_64 = { url = "https://github.com/<user>/<repo>/releases/download/v1.0.0/<plugin>-windows-x86_64.dll", sha256 = "<sha256sum of the file>" }
+  macos-aarch64  = { url = "https://github.com/<user>/<repo>/releases/download/v1.0.0/<plugin>-macos-aarch64.dylib", sha256 = "<sha256sum of the file>" }
