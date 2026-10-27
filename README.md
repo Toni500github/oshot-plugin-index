@@ -1,8 +1,9 @@
 # oshot plugin index
 
 The list of plugins that [oshot](https://github.com/Toni500github/oshot) can browse and install. Each plugin is one
-file, [`plugins/<id>.toml`](plugins), added and updated through pull requests. Every merge combines the entries into
-one index that oshot downloads:
+file, [`plugins/<id>.toml`](plugins), submitted to the
+[`new-pr`](https://github.com/Toni500github/oshot-plugin-index/tree/new-pr) branch and updated through pull requests.
+Every change combines the entries into one index that oshot downloads:
 
 - https://toni500github.github.io/oshot-plugin-index/index.toml (what oshot reads)
 - https://toni500github.github.io/oshot-plugin-index/index.json (the same, for other tools)
@@ -24,12 +25,24 @@ for how to make one.
 1. Release your plugin: tag a commit in a public git repository and, if you can, attach prebuilt libraries (or
    oshotpm prebuilt archives) for the platforms you support. Prebuilt files are what most people need, since building
    from source needs git, a compiler and oshot's SDK, which few Windows and macOS users have.
-2. Fork this repository and add `plugins/<your plugin ID>.toml`, starting from an existing entry such as
-   [`plugins/io.github.toni500github.plugin-test.toml`](plugins/io.github.toni500github.plugin-test.toml), the
-   [test plugin](https://github.com/Toni500github/oshot-plugin-test) whose release workflow builds every target.
-3. Open a pull request. The checks below run on it; fix what they report.
+2. Fork this repository with **Copy the `main` branch only** unchecked, so that your fork has the `new-pr` branch.
+   Like Flathub's `new-pr`, it only holds a template entry. Clone it and start a branch for your plugin:
 
-One plugin per pull request, please.
+   ```sh
+   git clone --branch new-pr --single-branch https://github.com/<your GitHub user>/oshot-plugin-index oshot-plugin-submission
+   cd oshot-plugin-submission
+   git checkout -b <your plugin ID>
+   ```
+
+3. Copy or rename `template.toml` to `plugins/<your plugin ID>.toml` and fill it in (it's [the entry](#the-entry)
+   below). [`plugins/io.github.toni500github.plugin-test.toml`](plugins/io.github.toni500github.plugin-test.toml), the
+   entry of the [test plugin](https://github.com/Toni500github/oshot-plugin-test) whose release workflow builds every
+   target, is a complete example.
+4. Push the branch and open a pull request against `new-pr`, not `main`. The checks below run on it; fix what they
+   report.
+
+When a maintainer merges it, the entry is committed to `plugins/` on `main` in your name, `new-pr` goes back to the
+template, and the index is rebuilt. One plugin per pull request, please.
 
 ### Plugin IDs
 
@@ -84,7 +97,8 @@ source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v
 
 ## Updating a plugin
 
-Add a new `[[versions]]` table and open a pull request from one of the `owners`.
+Add a new `[[versions]]` table to `plugins/<id>.toml` and open a pull request against `main` from one of the
+`owners`.
 
 Released versions can't be changed or removed, so what was reviewed stays what people install. To withdraw one,
 yank it, so oshot stops offering it and warns people who have it installed.
@@ -101,6 +115,8 @@ To hand a plugin over, have a current owner add the new one to `owners`.
 [`scripts/validate.py`](scripts/validate.py) runs on every pull request and checks:
 
 - the entry against the schema, and that its file is named after its ID;
+- against `new-pr`, that the pull request only adds `plugins/<id>.toml` and the plugin isn't in the index yet; against
+  `main`, that it adds no new entries, unless it's from a maintainer;
 - that the pull request's author is an owner (a maintainer, listed in [`.github/maintainers`](.github/maintainers),
   may change any entry);
 - that released versions are unchanged, apart from yanking;
@@ -116,7 +132,8 @@ Run the checks yourself (Python 3.11+):
 ```sh
 pip install -r scripts/requirements.txt
 python scripts/validate.py plugins/<id>.toml           # the entry
-python scripts/validate.py --base origin/main --author <your GitHub user> --network --inspect   # like CI
+python scripts/validate.py ../oshot-plugin-submission/plugins/<id>.toml   # a submission, from a clone of main
+python scripts/validate.py --base origin/main --author <your GitHub user> --network --inspect   # like CI, for an update
 python scripts/build_index.py --out site               # the index oshot downloads
 ```
 

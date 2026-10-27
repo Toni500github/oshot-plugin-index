@@ -10,7 +10,7 @@ compare the ID, ABI and ImGui version compiled into them.
 
 Usage:
     validate.py [FILE...]                    every entry, or the given files
-    validate.py --base origin/main --author LOGIN [--network] [--inspect]
+    validate.py --base origin/main --author LOGIN [--allow-new] [--network] [--inspect]
 """
 
 from __future__ import annotations
@@ -151,7 +151,7 @@ def changed_entries(base: str) -> list[tuple[Path, str]]:
 
 
 def check_change(path: Path, status: str, entry: dict | None, base: str, author: str | None,
-                 maintainers: set[str]) -> list[dict]:
+                 maintainers: set[str], allow_new: bool) -> list[dict]:
     """Checks a change against the base branch and returns the versions it adds."""
     old_text = git_show(base, path) if status != "A" else None
     old = load_toml(old_text) if old_text else None
@@ -166,6 +166,9 @@ def check_change(path: Path, status: str, entry: dict | None, base: str, author:
         return []
 
     if old is None:
+        # New plugins come in through the new-pr branch, whose checks pass --allow-new
+        if author is not None and not is_maintainer and not allow_new:
+            report(path, "new plugins are submitted to the new-pr branch, see the README")
         if not allowed(entry["owners"]):
             report(path, f"the pull request's author ({author}) must be one of the owners")
         return entry["versions"]
@@ -323,6 +326,7 @@ def main() -> int:
     parser.add_argument("files", nargs="*", type=Path, help="entries to check (default: all of plugins/)")
     parser.add_argument("--base", help="git ref to compare against, e.g. origin/main")
     parser.add_argument("--author", help="GitHub login of the pull request's author")
+    parser.add_argument("--allow-new", action="store_true", help="let the author add entries (a new-pr submission)")
     parser.add_argument("--network", action="store_true", help="download new artifacts and check git tags")
     parser.add_argument("--inspect", action="store_true", help="load new linux-x86_64 builds (implies --network)")
     args = parser.parse_args()
@@ -353,7 +357,8 @@ def main() -> int:
         for path, status in changed_entries(args.base):
             if status != "D" and path not in entries:
                 continue  # invalid, already reported
-            new_versions = check_change(path, status, entries.get(path), args.base, args.author, maintainers)
+            new_versions = check_change(path, status, entries.get(path), args.base, args.author, maintainers,
+                                        args.allow_new)
             if (args.network or args.inspect) and new_versions:
                 check_network(path, entries[path], new_versions, args.inspect)
 
