@@ -9,6 +9,21 @@ license     = "Unlicense"
 tags        = ["test", "text"]
 
 [[versions]]
+version = "1.0.1"
+date    = 2026-10-27
+abi     = 1
+imgui   = 19284
+changes = "The README mentions the plugin index"
+source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v1.0.1", commit = "6cb5f1234310e768c8a8d96947accafb4bcc78d3" }
+
+  [versions.artifacts]
+  linux-x86_64   = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.1/oshot-plugin-test-linux-x86_64.so", sha256 = "7eedf9cb9d8271ba8a843fb9d2244d3a80f1423e25c2125b593fc0cdd2c75622" }
+  linux-aarch64  = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.1/oshot-plugin-test-linux-aarch64.so", sha256 = "f2b0405657f6585be37c4f89bee471396a8219752eaa4a57ce7a02307cc8675b" }
+  windows-x86_64 = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.1/oshot-plugin-test-windows-x86_64.dll", sha256 = "62794828310cab59822016525444a4c9499da937871d5fe02defa7a5203c1457" }
+  macos-aarch64  = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.1/oshot-plugin-test-macos-aarch64.dylib", sha256 = "5bf3a06c83515cbb060e9ae70f9d12b2dbaca3f209b7054d05f9a0e610ad33a7" }
+  macos-x86_64   = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.0.1/oshot-plugin-test-macos-x86_64.dylib", sha256 = "f6e0a6dd07e0634c9bf96ef6ba516223b00688717ae7bc4b3b2683ffdaf6afa1" }
+
+[[versions]]
 version = "1.0.0"
 date    = 2026-10-17
 abi     = 1
