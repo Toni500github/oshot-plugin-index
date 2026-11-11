@@ -220,7 +220,7 @@
           "minimum": 1
         },
         "imgui": {
-          "description": "OSHOT_IMGUI_VERSION the plugin is built for, or 0 if it doesn't use ImGui.",
+          "description": "OSHOT_IMGUI_VERSION the plugin is built for if it calls Dear ImGui through cimgui, or 0 (OSHOT_NO_IMGUI) if it only draws with oshot's widgets.",
           "type": "integer",
           "minimum": 0
         },

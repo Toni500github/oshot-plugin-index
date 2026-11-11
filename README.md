@@ -74,7 +74,7 @@ tags        = ["test", "text"]               # optional, up to 8
 version = "1.0.0"                            # semantic version
 date    = 2026-10-17
 abi     = 1                                  # OSHOT_API_VERSION it's built for
-imgui   = 19284                              # OSHOT_IMGUI_VERSION, or 0 without ImGui
+imgui   = 19284                              # OSHOT_IMGUI_VERSION if it calls cimgui, else 0
 changes = "First release on the reworked plugin API"   # optional
 source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v1.0.0", commit = "<40 hex digits>" }
 
@@ -109,11 +109,12 @@ source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v
 Add a new `[[versions]]` table to `plugins/<id>.toml` and open a pull request against `main` from one of the
 `owners`.
 
-Once its checks pass, it's merged on its own after 24 hours, so a maintainer has time to look at it. That's if it
-only adds versions to your entry, or yanks some, builds them from the same git repository and downloads them from the
-same places as before (the same GitHub or Codeberg repository, or else the same server). Anything else waits for a
-maintainer: changing `owners`, `[capabilities]` or another field, moving the artifacts somewhere new, or changing other
-files. A yank doesn't wait. [`scripts/automerge.py`](scripts/automerge.py) has the exact rules.
+It's merged on its own once its checks pass and 24 hours have gone by since its last push, which gives a maintainer
+time to look at it. That only happens when it adds or yanks versions of your entry and nothing else, and the new
+versions build from the same git repository and download from the same places as before (the same GitHub or Codeberg
+repository, or else the same server). Anything else waits for a maintainer: changing `owners`, `[capabilities]` or
+another field, moving the artifacts somewhere new, or changing other files. A yank doesn't wait the 24 hours.
+[`scripts/automerge.py`](scripts/automerge.py) has the exact rules.
 
 Released versions can't be changed or removed, so what was reviewed stays what people install. To withdraw one,
 yank it, so oshot stops offering it and warns people who have it installed.
