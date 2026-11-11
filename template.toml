@@ -13,13 +13,12 @@ homepage    = "https://github.com/<user>/<repo>"
 license     = "<SPDX expression, e.g. MIT>"
 authors     = ["<name>"]                     # optional, if not the same as owners
 tags        = ["<tag>"]                      # optional, up to 8 lowercase words
-network     = false                          # optional: whether it connects to the internet (shown before installing)
 
 [[versions]]
 version = "1.0.0"                            # semantic version
 date    = 2026-01-01                         # release date
 abi     = 1                                  # OSHOT_API_VERSION it's built for
-imgui   = 0                                  # OSHOT_IMGUI_VERSION, or 0 without ImGui
+imgui   = 0                                  # OSHOT_IMGUI_VERSION if it calls cimgui, else 0 (OSHOT_NO_IMGUI)
 changes = "First release"                    # optional
 source  = { git = "https://github.com/<user>/<repo>", tag = "v1.0.0", commit = "<40 hex digits the tag points to>" }
 
@@ -27,3 +26,8 @@ source  = { git = "https://github.com/<user>/<repo>", tag = "v1.0.0", commit = "
   linux-x86_64   = { url = "https://github.com/<user>/<repo>/releases/download/v1.0.0/<plugin>-linux-x86_64.so", sha256 = "<sha256sum of the file>" }
   windows-x86_64 = { url = "https://github.com/<user>/<repo>/releases/download/v1.0.0/<plugin>-windows-x86_64.dll", sha256 = "<sha256sum of the file>" }
   macos-aarch64  = { url = "https://github.com/<user>/<repo>/releases/download/v1.0.0/<plugin>-macos-aarch64.dylib", sha256 = "<sha256sum of the file>" }
+
+# Optional: what the plugin does beyond oshot's API, each with the reason it needs to, as in its
+# oshot-plugin.toml. oshot shows them before installing. Keys: network, files, processes
+#[capabilities]
+#network = "Sends the text to translate.example.com to translate it"
