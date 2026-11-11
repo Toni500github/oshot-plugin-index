@@ -9,6 +9,22 @@ license     = "Unlicense"
 tags        = ["test", "text"]
 
 [[versions]]
+version = "1.1.0"
+date    = 2026-11-11
+abi     = 1
+imgui   = 0
+changes = "Draws with oshot's widgets instead of cimgui, so it no longer depends on oshot's ImGui version. Adds a Windows ARM64 build"
+source  = { git = "https://github.com/Toni500github/oshot-plugin-test", tag = "v1.1.0", commit = "b031ce0d0b39430974eeac6cda66518c1cf731d3" }
+
+  [versions.artifacts]
+  linux-x86_64    = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.1.0/oshot-plugin-test-linux-x86_64.so", sha256 = "9c2e5fd0e84ed13bdd14f3786f8999b059d59396f2b9a372aac5d300762edb0c" }
+  linux-aarch64   = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.1.0/oshot-plugin-test-linux-aarch64.so", sha256 = "da9fb7d7206e0d37e3ba8904221c2aad84cbbfbd5d35ca908cdf77407603500e" }
+  windows-x86_64  = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.1.0/oshot-plugin-test-windows-x86_64.dll", sha256 = "2af93a40765c631697a863aa1afe9a68b4893ed89a18e86f16e95d4e0a3a17d6" }
+  windows-aarch64 = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.1.0/oshot-plugin-test-windows-aarch64.dll", sha256 = "cf293d75b5082b02faeffa6215215c7a8cced7124b5d53b2d41fe8534e4b8eb9" }
+  macos-aarch64   = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.1.0/oshot-plugin-test-macos-aarch64.dylib", sha256 = "46af53903ead56a4596d4791ec15eccf893b741f7b8910468ab0f28accd6204e" }
+  macos-x86_64    = { url = "https://github.com/Toni500github/oshot-plugin-test/releases/download/v1.1.0/oshot-plugin-test-macos-x86_64.dylib", sha256 = "88d93658f718e7930c0b2a9d660ef3ba8b6f97fbfb419fd135634fe5c33253a2" }
+
+[[versions]]
 version = "1.0.1"
 date    = 2026-10-27
 abi     = 1
